@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>DevTeam AI</title>
+
+<style>
+
+body{
+background:#0f0f0f;
+color:white;
+font-family:Arial;
+margin:40px;
+}
+
+input{
+padding:10px;
+width:400px;
+}
+
+button{
+padding:10px;
+margin-left:10px;
+}
+
+#container{
+display:flex;
+margin-top:30px;
+}
+
+#files{
+width:300px;
+border-right:1px solid #333;
+padding-right:20px;
+}
+
+.file{
+cursor:pointer;
+color:#4cc9f0;
+margin:8px 0;
+}
+
+.file:hover{
+color:#90e0ef;
+}
+
+#viewer{
+flex:1;
+padding-left:20px;
+}
+
+pre{
+background:black;
+padding:20px;
+overflow:auto;
+height:500px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>DevTeam AI</h1>
+
+<input id="task" placeholder="Build a FastAPI TODO API">
+<button onclick="runAI()">Run AI</button>
+
+<button onclick="download()">Download Project</button>
+
+
+<div id="container">
+
+<div id="files">
+
+<h3>Project Files</h3>
+
+<div id="filelist"></div>
+
+</div>
+
+
+<div id="viewer">
+
+<h3 id="filename">File Content</h3>
+
+<pre id="code"></pre>
+
+</div>
+
+</div>
+
+
+<script>
+
+async function runAI(){
+
+let task=document.getElementById("task").value
+
+let res=await fetch(`/run?task=${encodeURIComponent(task)}`)
+
+let data=await res.json()
+
+let files=data.files
+
+let html=""
+
+files.forEach((f,i)=>{
+
+html+=`<div class="file" onclick="openFile('${f.filename}')">${f.filename}</div>`
+
+})
+
+document.getElementById("filelist").innerHTML=html
+
+
+if(files.length>0){
+
+openFile(files[0].filename)
+
+}
+
+}
+
+
+
+async function openFile(name){
+
+let res=await fetch(`/file?filename=${name}`)
+
+let data=await res.json()
+
+document.getElementById("filename").textContent=name
+
+document.getElementById("code").textContent=data.content
+
+}
+
+
+function download(){
+
+window.location="/download"
+
+}
+
+</script>
+
+</body>
+
+</html>
