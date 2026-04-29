@@ -9,3 +9,4 @@ langchain-groq
 pydantic
 aiofiles
 streamlit
+openai
