@@ -77,6 +77,15 @@ async def generate_response(prompt_or_messages) -> str:
 
     # Groq Key Failover Logic
     last_error = "Unknown error"
+    
+    # Estimate input tokens (rough approximation: 1 token ~= 4 characters)
+    input_text = "".join([str(m.get("content", "")) for m in messages])
+    estimated_input_tokens = len(input_text) // 4
+    
+    # Dynamically set max_tokens to ensure (input + output) < 6000 limit
+    # We leave a buffer of 200 tokens
+    dynamic_max = max(500, 5800 - estimated_input_tokens)
+    
     for _ in range(max(1, len(API_KEYS))):
         try:
             client, _ = get_async_client()
@@ -84,7 +93,7 @@ async def generate_response(prompt_or_messages) -> str:
                 model=DEFAULT_MODEL,
                 messages=messages,
                 temperature=0.2,
-                max_tokens=4000
+                max_tokens=dynamic_max
             )
             return response.choices[0].message.content
         except Exception as e:
