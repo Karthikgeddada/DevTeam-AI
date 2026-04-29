@@ -84,7 +84,7 @@ async def generate_response(prompt_or_messages) -> str:
                 model=DEFAULT_MODEL,
                 messages=messages,
                 temperature=0.2,
-                max_tokens=8192
+                max_tokens=4000
             )
             return response.choices[0].message.content
         except Exception as e:
