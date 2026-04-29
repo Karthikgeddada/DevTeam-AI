@@ -119,3 +119,6 @@ if st.button("Generate Project ✨"):
                             file_name=f"devteam_project_{run_id}.zip",
                             mime="application/zip"
                         )
+            else:
+                st.error("Generation completed, but the AI output could not be formatted into files. Please try again with a slightly different prompt.")
+

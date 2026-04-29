@@ -1,5 +1,6 @@
 import json
 from config.llm_config import generate_response
+from utils.json_parser import parse_json_response
 
 async def debugger_agent(code_files: list, review_comments: str) -> list:
     if "LGTM" in review_comments.upper() and len(review_comments) < 50:
@@ -22,13 +23,5 @@ Code Files: {files_str}
 Review Comments: {review_comments}
 """
     response = await generate_response(system_prompt)
-    try:
-        if response.startswith("```json"):
-            response = response.strip("```json").strip("```")
-        elif response.startswith("```"):
-            response = response.strip("```")
-        data = json.loads(response)
-        return data.get("files", code_files)
-    except Exception as e:
-        print(f"Failed to parse debugger output: {e}")
-        return code_files
+    data = parse_json_response(response)
+    return data.get("files", code_files)

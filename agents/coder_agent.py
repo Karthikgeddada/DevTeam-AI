@@ -1,5 +1,5 @@
-import json
 from config.llm_config import generate_response
+from utils.json_parser import parse_json_response
 
 async def coder_agent(prompt: str, architecture: str) -> list:
     system_prompt = f"""You are the Code Generator Agent.
@@ -22,14 +22,5 @@ User Prompt: {prompt}
 Architecture: {architecture}
 """
     response = await generate_response(system_prompt)
-    try:
-        # Strip markdown if LLM adds it
-        if response.startswith("```json"):
-            response = response.strip("```json").strip("```")
-        elif response.startswith("```"):
-            response = response.strip("```")
-        data = json.loads(response)
-        return data.get("files", [])
-    except Exception as e:
-        print(f"Failed to parse coder output: {e}")
-        return []
+    data = parse_json_response(response)
+    return data.get("files", [])
