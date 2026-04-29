@@ -68,7 +68,7 @@ async def generate_response(prompt_or_messages) -> str:
             )
             return response.choices[0].message.content
         except Exception as e:
-            return f"Error: Local LLM failed. Ensure Ollama is running at {OLLAMA_BASE_URL}. Original error: {str(e)}"
+            raise Exception(f"Local LLM failed. Ensure Ollama is running at {OLLAMA_BASE_URL}. Original error: {str(e)}")
 
     # Groq Key Failover Logic
     for _ in range(max(1, len(API_KEYS))):
@@ -84,8 +84,8 @@ async def generate_response(prompt_or_messages) -> str:
         except Exception as e:
             error_msg = str(e)
             print(f"API Attempt failed: {error_msg}")
-            if "invalid_api_key" in error_msg.lower() or "401" in error_msg or "organization_restricted" in error_msg.lower():
+            if "invalid_api_key" in error_msg.lower() or "401" in error_msg or "organization_restricted" in error_msg.lower() or "rate_limit" in error_msg.lower():
                 continue
-            break
+            raise Exception(f"Groq API Error: {error_msg}")
             
-    return "Error: AI generation failed after multiple key attempts. Try switching to LLM_PROVIDER=ollama"
+    raise Exception("AI generation failed: All configured Groq API keys are restricted, invalid, or rate-limited. Please check your API keys in Streamlit Secrets.")
