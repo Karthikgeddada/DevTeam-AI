@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+jinja2
+python-dotenv
+groq
+langgraph
+langchain
+langchain-groq
+pydantic
+aiofiles
