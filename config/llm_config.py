@@ -18,7 +18,7 @@ except Exception:
 # -----------------------------
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq").lower()
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
-DEFAULT_MODEL = os.getenv("DEFAULT_MODEL", "llama3-8b-8192" if LLM_PROVIDER == "groq" else "llama3:8b")
+DEFAULT_MODEL = os.getenv("DEFAULT_MODEL", "llama-3.3-70b-versatile" if LLM_PROVIDER == "groq" else "llama3:8b")
 
 # -----------------------------
 # API Key Rotation (Groq only)
@@ -85,7 +85,7 @@ async def generate_response(prompt_or_messages) -> str:
                 model=DEFAULT_MODEL,
                 messages=messages,
                 temperature=0.2,
-                max_tokens=6000
+                max_tokens=3500
             )
             return response.choices[0].message.content
         except Exception as e:
